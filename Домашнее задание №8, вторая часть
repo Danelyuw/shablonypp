@@ -1,0 +1,62 @@
+
+interface IPaymentProcessor {
+    void processPayment(double amount);
+}
+
+class PayPalPaymentProcessor implements IPaymentProcessor {
+    @Override
+    public void processPayment(double amount) {
+        System.out.println("Оплата через PayPal: " + amount + " тг");
+    }
+}
+
+class StripePaymentService {
+    public void makeTransaction(double totalAmount) {
+        System.out.println("Платеж через Stripe: " + totalAmount + " тг");
+    }
+}
+
+class StripePaymentAdapter implements IPaymentProcessor {
+    private StripePaymentService stripeService;
+
+    public StripePaymentAdapter(StripePaymentService stripeService) {
+        this.stripeService = stripeService;
+    }
+
+    @Override
+    public void processPayment(double amount) {
+        stripeService.makeTransaction(amount);
+    }
+}
+
+class QiwiPaymentService {
+    public void sendPayment(double money) {
+        System.out.println("Платеж через QIWI: " + money + " тг");
+    }
+}
+
+class QiwiPaymentAdapter implements IPaymentProcessor {
+    private QiwiPaymentService qiwiService;
+
+    public QiwiPaymentAdapter(QiwiPaymentService qiwiService) {
+        this.qiwiService = qiwiService;
+    }
+
+    @Override
+    public void processPayment(double amount) {
+        qiwiService.sendPayment(amount);
+    }
+}
+
+public class PaymentDemo {
+    public static void main(String[] args) {
+        IPaymentProcessor paypal = new PayPalPaymentProcessor();
+        paypal.processPayment(1000);
+
+        IPaymentProcessor stripe = new StripePaymentAdapter(new StripePaymentService());
+        stripe.processPayment(2500);
+
+        IPaymentProcessor qiwi = new QiwiPaymentAdapter(new QiwiPaymentService());
+        qiwi.processPayment(500);
+    }
+}
